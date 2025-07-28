@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import { Eye, EyeOff, User, Mail, Phone, CreditCard, Lock, TrendingUp, Shield, Users, Award } from 'lucide-react';
-import {useAuth} from '../components/AuthContext';
+import { useAuth } from '../components/AuthContext';
+import { useNavigate } from 'react-router-dom';
 
 const AuthPage = () => {
-   const { login } = useAuth();
+  const { login } = useAuth();
+  const navigate = useNavigate();
   const [isLogin, setIsLogin] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -60,6 +62,11 @@ const AuthPage = () => {
         login(data.user, data.token);
         setMessage('Login successful! Welcome back!');
         setMessageType('success');
+        
+        // Redirect to home page after successful login
+        setTimeout(() => {
+          navigate('/home');
+        }, 1000);
       } else {
         setMessage(data.message || 'Login failed. Please try again.');
         setMessageType('error');
@@ -99,6 +106,11 @@ const AuthPage = () => {
         login(data.user, data.token);
         setMessage('Registration successful! Welcome to Kenya Investment Platform!');
         setMessageType('success');
+        
+        // Redirect to home page after successful registration
+        setTimeout(() => {
+          navigate('/home');
+        }, 1000);
       } else {
         const errorMessage = typeof data === 'object' ? 
           Object.values(data).flat().join(', ') : 

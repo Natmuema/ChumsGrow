@@ -15,12 +15,7 @@ function App() {
             <Route path="/auth" element={<AuthPage />} />
             
             {/* Protected routes */}
-            <Route path="/" element={
-              <ProtectedRoute>
-                <Navbar />
-                <Navigate to="/home" replace />
-              </ProtectedRoute>
-            } />
+            <Route path="/" element={<Navigate to="/home" replace />} />
             <Route path="/home" element={
               <ProtectedRoute>
                 <Navbar />

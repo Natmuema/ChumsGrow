@@ -1,9 +1,16 @@
 import {React, useState} from 'react'
 import { TrendingUp, Menu, X, User, Bell } from 'lucide-react';
 import { Link, NavLink } from 'react-router-dom';
+import { useAuth } from './AuthContext';
 
 const Navbar = () => {
+  const { user, logout, isAuthenticated } = useAuth();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  const handleLogout = () => {
+    logout();
+  };
+
   return (
  <header className="bg-transparent shadow-sm border-b border-transparent sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -40,12 +47,33 @@ const Navbar = () => {
             <button className="p-2 text-gray-400 hover:text-gray-600 transition-colors">
               <Bell className="h-5 w-5" />
             </button>
-            <NavLink to="/auth">
-              <button className="flex items-center space-x-2 bg-green-700 text-white px-4 py-2 rounded-lg hover:bg-green-400 transition-colors">
-                <User className="h-4 w-4" />
-                <span>Login</span>
-              </button>
-            </NavLink>
+            {isAuthenticated() ? (
+              <div className="flex items-center space-x-4">
+                <div className="flex items-center space-x-2">
+                  <div className="w-8 h-8 bg-green-600 rounded-full flex items-center justify-center">
+                    <span className="text-white text-sm font-semibold">
+                      {user?.full_name?.charAt(0) || user?.username?.charAt(0) || 'U'}
+                    </span>
+                  </div>
+                  <span className="text-gray-700 font-medium">
+                    {user?.full_name || user?.username}
+                  </span>
+                </div>
+                <button 
+                  onClick={handleLogout}
+                  className="flex items-center space-x-2 bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors"
+                >
+                  <span>Logout</span>
+                </button>
+              </div>
+            ) : (
+              <NavLink to="/auth">
+                <button className="flex items-center space-x-2 bg-green-700 text-white px-4 py-2 rounded-lg hover:bg-green-400 transition-colors">
+                  <User className="h-4 w-4" />
+                  <span>Login</span>
+                </button>
+              </NavLink>
+            )}
           </div>
 
           {/* Mobile menu button */}
@@ -73,12 +101,21 @@ const Navbar = () => {
               <NavLink to="/insights" className="text-gray-700 hover:text-green-600 font-medium transition-colors">
                 Market Insights
               </NavLink>
-              <NavLink to="/">
-                <button className="flex items-center space-x-2 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors">
-                <User className="h-4 w-4" />
-                <span>Account</span>
+              {isAuthenticated() ? (
+                <button 
+                  onClick={handleLogout}
+                  className="flex items-center space-x-2 bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors"
+                >
+                  <span>Logout</span>
                 </button>
-              </NavLink>
+              ) : (
+                <NavLink to="/auth">
+                  <button className="flex items-center space-x-2 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors">
+                    <User className="h-4 w-4" />
+                    <span>Login</span>
+                  </button>
+                </NavLink>
+              )}
             </nav>
           </div>
         )}
