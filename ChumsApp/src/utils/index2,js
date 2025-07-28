@@ -1,0 +1,41 @@
+const Investment = {
+  id: '',
+  name: '',
+  type: '', // 'stock' | 'reit' | 'tbill' | 'sacco' | 'bond'
+  currentPrice: 0,
+  change: 0,
+  changePercent: 0,
+  riskLevel: '', // 'Low' | 'Medium' | 'High'
+  minInvestment: 0,
+  description: '',
+  sector: '', // optional
+  yield: 0 // optional
+};
+
+// MarketData
+const MarketData = {
+  index: '',
+  value: 0,
+  change: 0,
+  changePercent: 0,
+  timestamp: ''
+};
+
+// UserProfile
+const UserProfile = {
+  riskTolerance: '', // 'Conservative' | 'Moderate' | 'Aggressive'
+  monthlyIncome: 0,
+  investmentGoals: [], // array of strings
+  timeHorizon: '',
+  experience: '' // 'Beginner' | 'Intermediate' | 'Advanced'
+};
+
+// EducationContent
+const EducationContent = {
+  id: '',
+  title: '',
+  category: '',
+  content: '',
+  readTime: 0,
+  difficulty: '' // 'Beginner' | 'Intermediate' | 'Advanced'
+};
