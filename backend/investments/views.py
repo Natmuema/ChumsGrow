@@ -21,8 +21,18 @@ from .serializers import (
 # Set up logging
 logger = logging.getLogger(__name__)
 
-# Initialize OpenAI client
-client = OpenAI(api_key=getattr(settings, 'OPENAI_API_KEY', None))
+# Initialize OpenAI client lazily
+client = None
+
+def get_openai_client():
+    global client
+    if client is None and getattr(settings, 'OPENAI_API_KEY', None):
+        try:
+            client = OpenAI(api_key=settings.OPENAI_API_KEY)
+        except Exception as e:
+            logger.error(f"Failed to initialize OpenAI client: {e}")
+            client = False
+    return client if client is not False else None
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
@@ -220,7 +230,8 @@ def update_risk_profile(request):
 def generate_ai_recommendations(profile):
     """Generate personalized investment recommendations using OpenAI API"""
     
-    if not client or not hasattr(settings, 'OPENAI_API_KEY'):
+    openai_client = get_openai_client()
+    if not openai_client:
         logger.warning("OpenAI API key not configured, using fallback recommendations")
         return get_fallback_recommendations(profile)
     
@@ -258,7 +269,7 @@ def generate_ai_recommendations(profile):
     """
     
     try:
-        response = client.chat.completions.create(
+        response = openai_client.chat.completions.create(
             model="gpt-4o-mini",  # Using correct model name
             max_tokens=2000,
             temperature=0.7,

@@ -1,10 +1,10 @@
 import React from 'react';
-import Recommendation from '../components/Recommendation';
+import RecommendationConnected from '../components/RecommendationConnected';
 
 const RiskProfiler = () => {
   return (
     <div>
-      <Recommendation />
+      <RecommendationConnected />
     </div>
   );
 };
