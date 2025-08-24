@@ -1,15 +1,29 @@
-import {React, useState} from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { TrendingUp, Menu, X, User, Bell } from 'lucide-react';
 import { Link, NavLink } from 'react-router-dom';
 import { useAuth } from './AuthContext';
 
 const Navbar = () => {
   const { user, logout, isAuthenticated } = useAuth();
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
+  const userMenuRef = useRef(null);
 
   const handleLogout = () => {
     logout();
   };
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (userMenuRef.current && !userMenuRef.current.contains(event.target)) {
+        setIsUserMenuOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
 
   return (
  <header className="bg-transparent shadow-sm border-b border-transparent sticky top-0 z-50">
@@ -48,8 +62,11 @@ const Navbar = () => {
               <Bell className="h-5 w-5" />
             </button>
             {isAuthenticated() ? (
-              <div className="flex items-center space-x-4">
-                <div className="flex items-center space-x-2">
+              <div className="relative" ref={userMenuRef}>
+                <button
+                  onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
+                  className="flex items-center space-x-2 p-2 rounded-lg hover:bg-gray-100 transition-colors"
+                >
                   <div className="w-8 h-8 bg-green-600 rounded-full flex items-center justify-center">
                     <span className="text-white text-sm font-semibold">
                       {user?.full_name?.charAt(0) || user?.username?.charAt(0) || 'U'}
@@ -58,13 +75,23 @@ const Navbar = () => {
                   <span className="text-gray-700 font-medium">
                     {user?.full_name || user?.username}
                   </span>
-                </div>
-                <button 
-                  onClick={handleLogout}
-                  className="flex items-center space-x-2 bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors"
-                >
-                  <span>Logout</span>
                 </button>
+                {isUserMenuOpen && (
+                  <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50">
+                    <div className="px-4 py-2 text-sm text-gray-500 border-b">
+                      {user?.email || user?.username}
+                    </div>
+                    <NavLink to="/home" className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                      Home
+                    </NavLink>
+                    <button
+                      onClick={handleLogout}
+                      className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                    >
+                      Logout
+                    </button>
+                  </div>
+                )}
               </div>
             ) : (
               <NavLink to="/auth">
@@ -79,14 +106,14 @@ const Navbar = () => {
           {/* Mobile menu button */}
           <button
             className="md:hidden p-2 text-gray-400 hover:text-gray-600"
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
           >
-            {isMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+            {isMobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
           </button>
         </div>
 
         {/* Mobile Navigation */}
-        {isMenuOpen && (
+        {isMobileMenuOpen && (
           <div className="md:hidden py-4 border-t border-gray-200">
             <nav className="flex flex-col space-y-4">
               <NavLink to="/home" className="text-gray-700 hover:text-green-600 font-medium transition-colors">
