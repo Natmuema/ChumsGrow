@@ -22,7 +22,11 @@ from .serializers import (
 logger = logging.getLogger(__name__)
 
 # Initialize OpenAI client
-client = OpenAI(api_key=getattr(settings, 'OPENAI_API_KEY', None))
+try:
+    client = OpenAI(api_key=getattr(settings, 'OPENAI_API_KEY', None))
+except Exception as e:
+    logger.warning(f"Failed to initialize OpenAI client: {e}")
+    client = None
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])

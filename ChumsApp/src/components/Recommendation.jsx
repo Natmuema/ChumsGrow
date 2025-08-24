@@ -99,12 +99,28 @@ const Recommendation = () => {
       icon: <AlertTriangle className="w-6 h-6" />,
       type: 'radio',
       options: [
-        { value: 1, label: 'Nitauza mara moja', desc: 'Sell immediately' },
-        { value: 2, label: 'Nitauza sehemu', desc: 'Sell some portion' },
-        { value: 3, label: 'Nitasubiri hali ibadilike', desc: 'Wait and see' },
-        { value: 4, label: 'Sitafanya kitu', desc: 'Do nothing' },
-        { value: 5, label: 'Nitaongeza uwekezaji', desc: 'Invest more' }
+        {value: 1, label: 'Nitaondoka kabisa', desc: 'Sell everything immediately'},
+        {value: 2, label: 'Nitaondoka sehemu', desc: 'Sell some investments'},
+        {value: 3, label: 'Nitasubiri kidogo', desc: 'Wait and see'},
+        {value: 4, label: 'Nitanunua zaidi', desc: 'Buy more (dollar cost averaging)'},
+        {value: 5, label: 'Nitaongeza sana', desc: 'Significantly increase investment'}
       ]
+    },
+
+    {
+      id: 'investment_amount',
+      title: 'Una fedha ngapi za kuwekeza?',
+      subtitle: 'How much money do you have to invest?',
+      icon: <Coins className="w-6 h-6" />,
+      type: 'radio',
+      options: [
+        {value: 1, label: 'Chini ya Ksh 10,000', desc: 'Less than Ksh 10,000'},
+        {value: 2, label: 'Ksh 10,000 - Ksh 50,000', desc: 'Ksh 10,000 - Ksh 50,000'},
+        {value: 3, label: 'Ksh 50,000 - Ksh 100,000', desc: 'Ksh 50,000 - Ksh 100,000'},
+        {value: 4, label: 'Ksh 100,000 - Ksh 500,000', desc: 'Ksh 100,000 - Ksh 500,000'},
+        {value: 5, label: 'Zaidi ya Ksh 500,000', desc: 'More than Ksh 500,000'}
+      ]
+    }
     },
 
     {
@@ -236,7 +252,74 @@ const Recommendation = () => {
     }));
   };
 
-  const calculateRiskProfile = () => {
+  const calculateRiskProfile = async () => {
+    try {
+      // Calculate local risk score for UI
+      const scores = Object.values(responses);
+      const totalScore = scores.reduce((sum, score) => sum + score, 0);
+      const maxScore = questions.length * 5;
+      const percentage = (totalScore / maxScore) * 100;
+
+      // Determine risk tolerance based on score
+      let riskTolerance = 'conservative';
+      if (percentage > 70) riskTolerance = 'aggressive';
+      else if (percentage > 40) riskTolerance = 'moderate';
+
+      // Map responses to backend format
+      const ageMap = { 1: 60, 2: 50, 3: 40, 4: 30, 5: 25 };
+      const incomeMap = { 1: 15000, 2: 35000, 3: 75000, 4: 150000, 5: 250000 };
+      const timelineMap = { 1: 18, 2: 48, 3: 90, 4: 180, 5: 240 };
+      const goalMap = { 1: 'Retirement planning', 2: 'Capital preservation', 3: 'Regular income', 4: 'Steady growth', 5: 'Aggressive growth' };
+      const investmentAmountMap = { 1: 5000, 2: 30000, 3: 75000, 4: 300000, 5: 750000 };
+
+      const riskProfileData = {
+        age: ageMap[responses.age] || 30,
+        monthly_income: incomeMap[responses.income] || 50000,
+        investment_amount: investmentAmountMap[responses.investment_amount] || 50000,
+        risk_tolerance: riskTolerance,
+        investment_timeline: timelineMap[responses.timeline] || 60,
+        financial_goals: goalMap[responses.goal] || 'Steady growth'
+      };
+
+      // Call backend API to create risk profile and get recommendations
+      const response = await fetch('http://localhost:8000/api/risk-profiles/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('access_token')}`
+        },
+        body: JSON.stringify(riskProfileData)
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      
+      // Create local profile for UI display
+      const profile = {
+        type: riskTolerance.charAt(0).toUpperCase() + riskTolerance.slice(1),
+        swahili: getSwahiliName(riskTolerance),
+        score: percentage,
+        description: getDescription(riskTolerance),
+        swahiliDesc: getSwahiliDescription(riskTolerance),
+        color: getColor(riskTolerance),
+        recommendations: data.recommendations || [],
+        backendProfile: data.profile
+      };
+
+      setRiskProfile(profile);
+      generateAIInsights(profile, responses);
+      
+    } catch (error) {
+      console.error('Error creating risk profile:', error);
+      // Fallback to local calculation if API fails
+      calculateLocalRiskProfile();
+    }
+  };
+
+  const calculateLocalRiskProfile = () => {
     const scores = Object.values(responses);
     const totalScore = scores.reduce((sum, score) => sum + score, 0);
     const maxScore = questions.length * 5;
@@ -323,6 +406,42 @@ const Recommendation = () => {
 
     setRiskProfile(profile);
     generateAIInsights(profile, responses);
+  };
+
+  const getSwahiliName = (riskTolerance) => {
+    const names = {
+      conservative: 'Mwenye Tahadhari',
+      moderate: 'Mwenye Uwiano',
+      aggressive: 'Mwenye Ujasiri Mkuu'
+    };
+    return names[riskTolerance] || 'Mwenye Uwiano';
+  };
+
+  const getDescription = (riskTolerance) => {
+    const descriptions = {
+      conservative: 'You prefer safety and stability over high returns',
+      moderate: 'You balance risk and return for steady growth',
+      aggressive: 'You prioritize maximum growth despite high risk'
+    };
+    return descriptions[riskTolerance] || 'You balance risk and return for steady growth';
+  };
+
+  const getSwahiliDescription = (riskTolerance) => {
+    const descriptions = {
+      conservative: 'Unapendelea usalama na uthabiti kuliko faida kubwa',
+      moderate: 'Unaweza uwiano wa hatari na faida kwa ukuaji',
+      aggressive: 'Unataka ukuaji mkubwa licha ya hatari kubwa'
+    };
+    return descriptions[riskTolerance] || 'Unaweza uwiano wa hatari na faida kwa ukuaji';
+  };
+
+  const getColor = (riskTolerance) => {
+    const colors = {
+      conservative: 'bg-green-500',
+      moderate: 'bg-yellow-500',
+      aggressive: 'bg-red-500'
+    };
+    return colors[riskTolerance] || 'bg-yellow-500';
   };
 
   const handleAIChat = async (message) => {
