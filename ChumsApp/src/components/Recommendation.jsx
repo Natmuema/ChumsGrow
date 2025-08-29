@@ -1,9 +1,12 @@
-import {React, useState} from 'react'
+import {React, useState, useEffect} from 'react'
 import { ChevronRight, ChevronLeft, TrendingUp, Shield, AlertTriangle, Target, User, Coins, Clock, Brain, Bot, Sparkles, MessageCircle, Lightbulb, TrendingDown } from 'lucide-react';
+import { useAuth } from './AuthContext';
+import { fetchWithAuth } from '../utils/api';
 
 
 
 const Recommendation = () => {
+  const { isAuthenticated } = useAuth();
   const [currentStep, setCurrentStep] = useState(0);
   const [responses, setResponses] = useState({});
   const [riskProfile, setRiskProfile] = useState(null);
@@ -13,6 +16,9 @@ const Recommendation = () => {
   const [chatMessages, setChatMessages] = useState([]);
   const [userMessage, setUserMessage] = useState('');
   const [isTyping, setIsTyping] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [existingProfile, setExistingProfile] = useState(null);
  
 
   {/*Questions */}
@@ -236,7 +242,154 @@ const Recommendation = () => {
     }));
   };
 
-  const calculateRiskProfile = () => {
+  // Check for existing profile on component mount
+  useEffect(() => {
+    if (isAuthenticated()) {
+      checkExistingProfile();
+    }
+  }, []);
+
+  const checkExistingProfile = async () => {
+    try {
+      const response = await fetchWithAuth('http://localhost:8000/api/risk-profile/me/');
+      if (response.ok) {
+        const data = await response.json();
+        if (data.profile) {
+          setExistingProfile(data);
+          // Convert backend profile to frontend format
+          const convertedProfile = convertBackendProfile(data.profile, data.recommendations);
+          setRiskProfile(convertedProfile);
+        }
+      }
+    } catch (error) {
+      console.error('Error checking existing profile:', error);
+    }
+  };
+
+  const convertBackendProfile = (backendProfile, recommendations) => {
+    const riskLevelMap = {
+      'conservative': { type: 'Conservative', swahili: 'Mwenye Tahadhari', color: 'bg-green-500' },
+      'moderate': { type: 'Moderate', swahili: 'Mwenye Uwiano', color: 'bg-yellow-500' },
+      'aggressive': { type: 'Aggressive', swahili: 'Mwenye Ujasiri Mkuu', color: 'bg-red-500' }
+    };
+    
+    const profile = riskLevelMap[backendProfile.risk_tolerance] || riskLevelMap.moderate;
+    
+    return {
+      ...profile,
+      score: 50, // Default score since backend doesn't calculate percentage
+      description: `You prefer ${backendProfile.risk_tolerance} investment strategies`,
+      swahiliDesc: `Unapendelea mikakati ya uwekezaji ya ${profile.swahili}`,
+      recommendations: recommendations.map(rec => rec.investment.name),
+      backendRecommendations: recommendations,
+      financialGoals: backendProfile.financial_goals,
+      investmentAmount: backendProfile.investment_amount,
+      monthlyIncome: backendProfile.monthly_income
+    };
+  };
+
+  const calculateRiskProfile = async () => {
+    // If not authenticated, use local calculation
+    if (!isAuthenticated()) {
+      calculateLocalRiskProfile();
+      return;
+    }
+
+    setLoading(true);
+    setError(null);
+
+    try {
+      // Prepare data for backend API
+      const profileData = {
+        age: getAgeFromResponse(responses.age),
+        monthly_income: getIncomeFromResponse(responses.income),
+        investment_amount: getInvestmentAmountFromResponse(responses.income),
+        risk_tolerance: getRiskToleranceFromResponses(responses),
+        investment_timeline: getTimelineFromResponse(responses.timeline),
+        financial_goals: getGoalsFromResponse(responses.goal)
+      };
+
+      // Check if updating existing profile or creating new one
+      const url = existingProfile 
+        ? 'http://localhost:8000/api/risk-profile/update/'
+        : 'http://localhost:8000/api/risk-profile/';
+      
+      const method = existingProfile ? 'PUT' : 'POST';
+
+      const response = await fetchWithAuth(url, {
+        method: method,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(profileData)
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        // Convert backend response to frontend format
+        const convertedProfile = convertBackendProfile(data.profile, data.recommendations);
+        setRiskProfile(convertedProfile);
+        generateAIInsights(convertedProfile, responses);
+      } else {
+        setError(data.error || 'Failed to create risk profile');
+        // Fall back to local calculation
+        calculateLocalRiskProfile();
+      }
+    } catch (error) {
+      console.error('Error creating risk profile:', error);
+      setError(error.message || 'An error occurred');
+      // Fall back to local calculation
+      calculateLocalRiskProfile();
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Helper functions to convert frontend responses to backend format
+  const getAgeFromResponse = (ageValue) => {
+    const ageMap = {5: 22, 4: 30, 3: 40, 2: 50, 1: 60};
+    return ageMap[ageValue] || 30;
+  };
+
+  const getIncomeFromResponse = (incomeValue) => {
+    const incomeMap = {1: 15000, 2: 35000, 3: 75000, 4: 150000, 5: 250000};
+    return incomeMap[incomeValue] || 50000;
+  };
+
+  const getInvestmentAmountFromResponse = (incomeValue) => {
+    // Suggest 10-20% of monthly income as investment amount
+    const monthlyIncome = getIncomeFromResponse(incomeValue);
+    return Math.round(monthlyIncome * 0.15);
+  };
+
+  const getRiskToleranceFromResponses = (responses) => {
+    const totalScore = Object.values(responses).reduce((sum, score) => sum + score, 0);
+    const maxScore = questions.length * 5;
+    const percentage = (totalScore / maxScore) * 100;
+
+    if (percentage <= 35) return 'conservative';
+    if (percentage <= 65) return 'moderate';
+    return 'aggressive';
+  };
+
+  const getTimelineFromResponse = (timelineValue) => {
+    const timelineMap = {1: 12, 2: 36, 3: 84, 4: 180, 5: 240};
+    return timelineMap[timelineValue] || 60;
+  };
+
+  const getGoalsFromResponse = (goalValue) => {
+    const goalMap = {
+      1: 'Retirement planning and long-term wealth preservation',
+      2: 'Capital preservation with minimal risk',
+      3: 'Regular income generation from investments',
+      4: 'Steady growth with balanced risk',
+      5: 'Aggressive growth and wealth accumulation'
+    };
+    return goalMap[goalValue] || 'General investment growth';
+  };
+
+  const calculateLocalRiskProfile = () => {
     const scores = Object.values(responses);
     const totalScore = scores.reduce((sum, score) => sum + score, 0);
     const maxScore = questions.length * 5;
@@ -473,21 +626,79 @@ const Recommendation = () => {
               <h3 style={{ fontWeight: "600", color: "var(--color-text-dark)", marginBottom: "1rem" }}>
                 Recommended Investments
               </h3>
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.75rem" }}>
-                {riskProfile.recommendations.map((rec, index) => (
-                  <div
-                    key={index}
-                    style={{
-                      backgroundColor: "var(--color-background-light)",
-                      borderRadius: "0.5rem",
-                      padding: "0.75rem",
-                      border: "1px solid var(--color-border)",
-                    }}
-                  >
-                    <span style={{ fontSize: "0.875rem", color: "var(--color-text)" }}>{rec}</span>
-                  </div>
-                ))}
-              </div>
+              {riskProfile.backendRecommendations ? (
+                <div style={{ display: "grid", gap: "1rem" }}>
+                  {riskProfile.backendRecommendations.map((rec, index) => (
+                    <div
+                      key={index}
+                      style={{
+                        backgroundColor: "var(--color-background-light)",
+                        borderRadius: "0.75rem",
+                        padding: "1rem",
+                        border: "1px solid var(--color-border)",
+                      }}
+                    >
+                      <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "0.5rem" }}>
+                        <h4 style={{ fontWeight: "600", color: "var(--color-text-dark)" }}>{rec.investment.name}</h4>
+                        <span style={{ 
+                          backgroundColor: "var(--color-success)", 
+                          color: "white", 
+                          padding: "0.25rem 0.5rem", 
+                          borderRadius: "0.25rem",
+                          fontSize: "0.75rem"
+                        }}>
+                          {rec.investment.expected_return}% p.a.
+                        </span>
+                      </div>
+                      <p style={{ fontSize: "0.875rem", color: "var(--color-text)", marginBottom: "0.5rem" }}>
+                        {rec.investment.description}
+                      </p>
+                      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.5rem", fontSize: "0.875rem" }}>
+                        <div>
+                          <span style={{ color: "var(--color-text-light)" }}>Recommended Amount: </span>
+                          <span style={{ fontWeight: "600", color: "var(--color-primary)" }}>
+                            KSh {parseFloat(rec.recommended_amount).toLocaleString()}
+                          </span>
+                        </div>
+                        <div>
+                          <span style={{ color: "var(--color-text-light)" }}>Min. Investment: </span>
+                          <span style={{ fontWeight: "600" }}>
+                            KSh {parseFloat(rec.investment.minimum_amount).toLocaleString()}
+                          </span>
+                        </div>
+                      </div>
+                      {rec.ai_rationale && (
+                        <div style={{ 
+                          marginTop: "0.5rem", 
+                          padding: "0.5rem", 
+                          backgroundColor: "var(--color-info-light)",
+                          borderRadius: "0.25rem"
+                        }}>
+                          <p style={{ fontSize: "0.75rem", color: "var(--color-text)" }}>
+                            <strong>Why this investment?</strong> {rec.ai_rationale}
+                          </p>
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.75rem" }}>
+                  {riskProfile.recommendations.map((rec, index) => (
+                    <div
+                      key={index}
+                      style={{
+                        backgroundColor: "var(--color-background-light)",
+                        borderRadius: "0.5rem",
+                        padding: "0.75rem",
+                        border: "1px solid var(--color-border)",
+                      }}
+                    >
+                      <span style={{ fontSize: "0.875rem", color: "var(--color-text)" }}>{rec}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
 
             {/* Next Steps */}
@@ -716,12 +927,25 @@ const Recommendation = () => {
 
 
  return (
-  <div
-    className="min-h-screen p-4"
-    style={{
-      background: "linear-gradient(to bottom right, var(--color-background), var(--color-accent))",
-    }}
-  >
+  <>
+    <style>
+      {`
+        @keyframes spin {
+          0% { transform: rotate(0deg); }
+          100% { transform: rotate(360deg); }
+        }
+        @keyframes bounce {
+          0% { transform: translateY(0); }
+          100% { transform: translateY(-10px); }
+        }
+      `}
+    </style>
+    <div
+      className="min-h-screen p-4"
+      style={{
+        background: "linear-gradient(to bottom right, var(--color-background), var(--color-accent))",
+      }}
+    >
     <div className="max-w-2xl mx-auto">
       <div
         className="rounded-2xl shadow-xl overflow-hidden"
@@ -773,6 +997,38 @@ const Recommendation = () => {
 
         {/* Question Content */}
         <div className="p-8">
+          {/* Show authentication note */}
+          {!isAuthenticated() && currentStep === 0 && (
+            <div style={{ 
+              backgroundColor: "var(--color-info-light)", 
+              border: "1px solid var(--color-info)",
+              borderRadius: "0.5rem",
+              padding: "1rem",
+              marginBottom: "1rem"
+            }}>
+              <p style={{ fontSize: "0.875rem", color: "var(--color-text)" }}>
+                <strong>Note:</strong> You're using the risk profiler as a guest. 
+                <a href="/auth" style={{ color: "var(--color-primary)", marginLeft: "0.25rem" }}>
+                  Sign in
+                </a> to save your profile and get personalized AI-powered investment recommendations.
+              </p>
+            </div>
+          )}
+          
+          {/* Show error message */}
+          {error && (
+            <div style={{ 
+              backgroundColor: "var(--color-error-light)", 
+              border: "1px solid var(--color-error)",
+              borderRadius: "0.5rem",
+              padding: "1rem",
+              marginBottom: "1rem"
+            }}>
+              <p style={{ fontSize: "0.875rem", color: "var(--color-error)" }}>
+                <strong>Error:</strong> {error}
+              </p>
+            </div>
+          )}
           <div className="flex items-center mb-6">
             <div
               className="rounded-full p-3 mr-4"
@@ -880,25 +1136,45 @@ const Recommendation = () => {
 
           <button
             onClick={nextStep}
-            disabled={!isAnswered}
+            disabled={!isAnswered || loading}
             className="flex items-center px-6 py-2 rounded-lg font-medium transition-colors"
             style={{
-              backgroundColor: isAnswered
+              backgroundColor: isAnswered && !loading
                 ? "var(--color-primary)"
                 : "#E5E7EB",
-              color: isAnswered ? "white" : "var(--color-text-light)",
-              cursor: isAnswered ? "pointer" : "not-allowed",
+              color: isAnswered && !loading ? "white" : "var(--color-text-light)",
+              cursor: isAnswered && !loading ? "pointer" : "not-allowed",
             }}
           >
-            {currentStep === questions.length - 1
-              ? "Get Results"
-              : "Next"}
-            <ChevronRight className="w-4 h-4 ml-2" />
+            {loading ? (
+              <>
+                <div
+                  style={{
+                    border: "2px solid transparent",
+                    borderTopColor: "currentColor",
+                    borderRadius: "50%",
+                    width: "1rem",
+                    height: "1rem",
+                    animation: "spin 1s linear infinite",
+                    marginRight: "0.5rem"
+                  }}
+                ></div>
+                Processing...
+              </>
+            ) : (
+              <>
+                {currentStep === questions.length - 1
+                  ? "Get Results"
+                  : "Next"}
+                <ChevronRight className="w-4 h-4 ml-2" />
+              </>
+            )}
           </button>
         </div>
       </div>
     </div>
   </div>
+  </>
 );
 
 }
