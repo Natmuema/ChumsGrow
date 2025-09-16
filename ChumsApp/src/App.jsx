@@ -4,6 +4,7 @@ import { AuthProvider } from './components/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
 import Navbar from './components/Navbar';
 import { Home, RiskProfiler, LearningHub, MarketInsights, AuthPage, Opportunities } from './pages';
+import FarmTracker from './pages/FarmTracker';
 
 function App() {
   return (
@@ -44,6 +45,11 @@ function App() {
               <ProtectedRoute>
                 <Navbar />
                 <Opportunities />
+              </ProtectedRoute>
+            } />
+            <Route path="/farm-tracker" element={
+              <ProtectedRoute>
+                <FarmTracker />
               </ProtectedRoute>
             } />
           </Routes>
