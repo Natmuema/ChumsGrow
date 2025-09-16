@@ -40,6 +40,9 @@ const Navbar = () => {
             <NavLink to="/insights" className="text-gray-700 hover:text-green-700 font-medium transition-colors">
               Market Insights
             </NavLink>
+            <NavLink to="/farm-tracker" className="text-gray-700 hover:text-green-700 font-medium transition-colors">
+              Farm Tracker
+            </NavLink>
           </nav>
 
           {/* Actions */}
