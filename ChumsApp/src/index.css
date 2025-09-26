@@ -1,2 +1,37 @@
 @import "tailwindcss";
 
+:root {
+  --color-background: #ffffff;
+  --color-background-light: #f8fafc;
+  --color-text: #4b5563;
+  --color-text-light: #6b7280;
+  --color-text-dark: #111827;
+  --color-border: #e5e7eb;
+  --color-primary: #166534; /* green-800 */
+  --color-secondary: #2563eb; /* blue-600 */
+  --color-accent: #22c55e; /* green-500 */
+  --color-success: #16a34a; /* green-600 */
+  --color-info: #2563eb; /* blue-600 */
+  --color-info-light: #eff6ff; /* blue-50 */
+  --color-error: #dc2626; /* red-600 */
+  --color-error-light: #fee2e2; /* red-200 */
+  --color-opportunity: #22c55e;
+  --color-opportunity-light: #ecfdf5;
+  --color-strategy: #3b82f6;
+  --color-strategy-light: #eff6ff;
+  --color-education: #a855f7;
+  --color-education-light: #faf5ff;
+  --color-warning: #f59e0b;
+  --color-warning-light: #fffbeb;
+  --color-market: #0ea5e9;
+  --color-market-light: #f0f9ff;
+}
+
+/* Utility for line clamp if not present */
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
