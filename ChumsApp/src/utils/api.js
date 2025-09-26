@@ -1,3 +1,5 @@
+export const API_BASE = import.meta.env?.VITE_API_BASE || 'http://localhost:8000';
+
 export async function fetchWithAuth(url, options = {}) {
   let access = localStorage.getItem('access_token');
   const refresh = localStorage.getItem('refresh_token');
@@ -28,12 +30,12 @@ export async function fetchWithAuth(url, options = {}) {
     throw new Error('Authentication required. Please log in.');
   }
 
-  const refreshResponse = await fetch('/api/auth/refresh', {
+  const refreshResponse = await fetch(`${API_BASE}/api/token/refresh/`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ refresh_token: refresh })
+    body: JSON.stringify({ refresh })
   });
 
   if (!refreshResponse.ok) {

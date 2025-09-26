@@ -59,6 +59,8 @@ const AuthPage = () => {
       const data = await response.json();
 
       if (response.ok) {
+        // Persist tokens for authenticated API calls and refresh flow
+        localStorage.setItem('refresh_token', data.refresh);
         login(data.user, data.token);
         setMessage('Login successful! Welcome back!');
         setMessageType('success');
@@ -103,6 +105,8 @@ const AuthPage = () => {
       const data = await response.json();
 
       if (response.ok) {
+        // Persist tokens for authenticated API calls and refresh flow
+        localStorage.setItem('refresh_token', data.refresh);
         login(data.user, data.token);
         setMessage('Registration successful! Welcome to Kenya Investment Platform!');
         setMessageType('success');
