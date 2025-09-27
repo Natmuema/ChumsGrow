@@ -3,8 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { AuthProvider } from './components/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
 import Navbar from './components/Navbar';
-import Footer from './components/Footer';
-import { Home, RiskProfiler, LearningHub, MarketInsights, AuthPage, Opportunities, BlogPost } from './pages';
+import { Home, RiskProfiler, LearningHub, MarketInsights, AuthPage, Opportunities } from './pages';
 
 function App() {
   return (
@@ -21,42 +20,30 @@ function App() {
               <ProtectedRoute>
                 <Navbar />
                 <Home />
-                <Footer />
               </ProtectedRoute>
             } />
             <Route path="/risk-profiler" element={
               <ProtectedRoute>
                 <Navbar />
                 <RiskProfiler />
-                <Footer />
               </ProtectedRoute>
             } />
             <Route path="/learning-hub" element={
               <ProtectedRoute>
                 <Navbar />
                 <LearningHub />
-                <Footer />
               </ProtectedRoute>
             } />
             <Route path="/insights" element={
               <ProtectedRoute>
                 <Navbar />
                 <MarketInsights />
-                <Footer />
               </ProtectedRoute>
             } />
             <Route path="/opportunities" element={
               <ProtectedRoute>
                 <Navbar />
                 <Opportunities />
-                <Footer />
-              </ProtectedRoute>
-            } />
-            <Route path="/blog/:id" element={
-              <ProtectedRoute>
-                <Navbar />
-                <BlogPost />
-                <Footer />
               </ProtectedRoute>
             } />
           </Routes>

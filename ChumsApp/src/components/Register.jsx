@@ -99,7 +99,7 @@ const Register = () => {
 
     try {
       // Replace with your actual API endpoint
-      const response = await fetch('http://127.0.0.1:8000/api/register/', {
+      const response = await fetch('http://127.0.0.1:8000/register/', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -113,12 +113,10 @@ const Register = () => {
         setSuccess(true);
         setApiResponse(data);
         
-        // Store tokens in localStorage
-        if (data.token) {
-          localStorage.setItem('access_token', data.token);
-        }
-        if (data.refresh) {
-          localStorage.setItem('refresh_token', data.refresh);
+        // Store tokens in localStorage (you might want to use a more secure approach)
+        if (data.tokens) {
+          localStorage.setItem('access_token', data.tokens.access);
+          localStorage.setItem('refresh_token', data.tokens.refresh);
         }
         
         // You can redirect to dashboard or login page here

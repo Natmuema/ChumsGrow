@@ -5,7 +5,6 @@ import os
 from dotenv import load_dotenv
 from datetime import timedelta
 from decouple import config
-
 # Load environment variables from .env file
 load_dotenv()
 
