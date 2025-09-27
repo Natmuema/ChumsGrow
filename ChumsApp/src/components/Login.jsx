@@ -61,7 +61,7 @@ const Login = () => {
 
     try {
       // Replace with your actual API endpoint
-      const response = await fetch('http://127.0.0.1:8000/login/', {
+      const response = await fetch('http://127.0.0.1:8000/api/login/', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -75,18 +75,20 @@ const Login = () => {
         setSuccess(true);
         setApiResponse(data);
         
-        // Store tokens in localStorage
-        if (data.tokens) {
-          localStorage.setItem('access_token', data.tokens.access);
-          localStorage.setItem('refresh_token', data.tokens.refresh);
-          
-          // Store user data
-          localStorage.setItem('user_data', JSON.stringify(data.user));
+        // Store tokens in localStorage (backend returns token + refresh)
+        if (data.token) {
+          localStorage.setItem('access_token', data.token);
+        }
+        if (data.refresh) {
+          localStorage.setItem('refresh_token', data.refresh);
+        }
+        if (data.user) {
+          localStorage.setItem('user', JSON.stringify(data.user));
         }
         
-        // Redirect to dashboard after a short delay
+        // Redirect to home after a short delay
         setTimeout(() => {
-          window.location.href = '/dashboard';
+          window.location.href = '/home';
         }, 2000);
         
         console.log('Login successful:', data);
