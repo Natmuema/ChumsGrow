@@ -9,11 +9,11 @@ const Footer = () => {
           {/* Brand */}
           <div className="col-span-1 md:col-span-2">
             <div className="flex items-center space-x-2 mb-4">
-              <div className="bg-green-700 p-2 rounded-lg">
+              <div className="bg-primary p-2 rounded-lg">
                 <TrendingUp className="h-6 w-6 text-white" />
               </div>
               <div>
-                <h3 className="text-xl font-bold text-gray-900">ChumsGrow</h3>
+                <h3 className="text-xl font-bold text-primary">ChumsGrow</h3>
                 <p className="text-sm text-gray-500">Your Path to Smarter Investments</p>
               </div>
             </div>
@@ -26,10 +26,10 @@ const Footer = () => {
           <div>
             <h4 className="font-semibold text-gray-900 mb-4">Quick Links</h4>
             <ul className="space-y-2">
-              <li><a href="/home" className="text-gray-600 hover:text-green-700 transition-colors">Home</a></li>
-              <li><a href="/risk-profiler" className="text-gray-600 hover:text-green-700 transition-colors">Risk Profiler</a></li>
-              <li><a href="/learning-hub" className="text-gray-600 hover:text-green-700 transition-colors">Learning Hub</a></li>
-              <li><a href="/opportunities" className="text-gray-600 hover:text-green-700 transition-colors">Opportunities</a></li>
+              <li><a href="/home" className="text-gray-600 hover:text-primary transition-colors">Home</a></li>
+              <li><a href="/risk-profiler" className="text-gray-600 hover:text-primary transition-colors">Risk Profiler</a></li>
+              <li><a href="/learning-hub" className="text-gray-600 hover:text-primary transition-colors">Learning Hub</a></li>
+              <li><a href="/opportunities" className="text-gray-600 hover:text-primary transition-colors">Opportunities</a></li>
             </ul>
           </div>
 

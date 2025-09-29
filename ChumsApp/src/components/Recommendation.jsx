@@ -394,108 +394,66 @@ const Recommendation = () => {
 
   if (riskProfile) {
     return (
-  <div
-    style={{
-      minHeight: "100vh",
-      background: "linear-gradient(to bottom right, var(--color-background-light), var(--color-background))",
-      padding: "1rem",
-    }}
-  >
-    <div style={{ maxWidth: "1200px", margin: "0 auto" }}>
-      <div style={{ display: "grid", gridTemplateColumns: "1fr", gap: "1.5rem" }}>
+  <div className="min-h-screen bg-gray-50 p-4">
+    <div className="max-w-6xl mx-auto">
+      <div className="grid lg:grid-cols-3 gap-6">
         {/* Main Results */}
-        <div style={{ gridColumn: "span 2" }}>
-          <div
-            style={{
-              backgroundColor: "var(--color-background)",
-              borderRadius: "1rem",
-              boxShadow: "0 8px 24px rgba(0, 0, 0, 0.1)",
-              padding: "2rem",
-            }}
-          >
+        <div className="lg:col-span-2">
+          <div className="bg-white rounded-xl shadow-lg p-8">
             {/* Header */}
-            <div style={{ textAlign: "center", marginBottom: "2rem" }}>
-              <div
-                style={{
-                  display: "inline-flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  width: "5rem",
-                  height: "5rem",
-                  borderRadius: "50%",
-                  backgroundColor: `var(${riskProfile.color})`,
-                  color: "white",
-                  marginBottom: "1rem",
-                }}
-              >
-                <TrendingUp style={{ width: "2.5rem", height: "2.5rem" }} />
+            <div className="text-center mb-8">
+              <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-primary text-white mb-4">
+                <TrendingUp className="w-10 h-10" />
               </div>
-              <h1 style={{ fontSize: "2rem", fontWeight: "bold", color: "var(--color-text-dark)", marginBottom: "0.5rem" }}>
+              <h1 className="text-3xl font-bold text-gray-900 mb-2">
                 {riskProfile.swahili}
               </h1>
-              <p style={{ fontSize: "1.25rem", color: "var(--color-text-light)", marginBottom: "1rem" }}>
+              <p className="text-xl text-gray-600 mb-4">
                 {riskProfile.type}
               </p>
-              <div
-                style={{
-                  backgroundColor: "var(--color-background-light)",
-                  borderRadius: "9999px",
-                  height: "1rem",
-                  marginBottom: "1rem",
-                }}
-              >
+              <div className="bg-gray-200 rounded-full h-4 mb-4">
                 <div
-                  style={{
-                    height: "1rem",
-                    borderRadius: "9999px",
-                    backgroundColor: `var(${riskProfile.color})`,
-                    width: `${riskProfile.score}%`,
-                    transition: "width 1s ease",
-                  }}
+                  className="h-4 rounded-full bg-primary transition-all duration-1000"
+                  style={{ width: `${riskProfile.score}%` }}
                 ></div>
               </div>
-              <p style={{ fontSize: "0.875rem", color: "var(--color-text-light)" }}>
+              <p className="text-sm text-gray-500">
                 Risk Score: {riskProfile.score.toFixed(1)}%
               </p>
             </div>
 
             {/* Description */}
-            <div style={{ marginBottom: "1.5rem" }}>
-              <h3 style={{ fontWeight: "600", color: "var(--color-text-dark)", marginBottom: "0.5rem" }}>
+            <div className="mb-6">
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">
                 Profile Description
               </h3>
-              <p style={{ color: "var(--color-text)" }}>{riskProfile.description}</p>
-              <p style={{ color: "var(--color-text-light)", fontStyle: "italic" }}>{riskProfile.swahiliDesc}</p>
+              <p className="text-gray-700 mb-2">{riskProfile.description}</p>
+              <p className="text-gray-500 italic">{riskProfile.swahiliDesc}</p>
             </div>
 
             {/* Recommendations */}
-            <div style={{ marginBottom: "1.5rem" }}>
-              <h3 style={{ fontWeight: "600", color: "var(--color-text-dark)", marginBottom: "1rem" }}>
+            <div className="mb-6">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">
                 Recommended Investments
               </h3>
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.75rem" }}>
+              <div className="grid md:grid-cols-2 gap-3">
                 {riskProfile.recommendations.map((rec, index) => (
                   <div
                     key={index}
-                    style={{
-                      backgroundColor: "var(--color-background-light)",
-                      borderRadius: "0.5rem",
-                      padding: "0.75rem",
-                      border: "1px solid var(--color-border)",
-                    }}
+                    className="bg-gray-50 rounded-lg p-3 border border-gray-200 hover:border-primary transition-colors"
                   >
-                    <span style={{ fontSize: "0.875rem", color: "var(--color-text)" }}>{rec}</span>
+                    <span className="text-sm text-gray-700">{rec}</span>
                   </div>
                 ))}
               </div>
             </div>
 
             {/* Next Steps */}
-            <div style={{ marginBottom: "1.5rem" }}>
-              <h3 style={{ fontWeight: "600", color: "var(--color-primary)", marginBottom: "0.5rem" }}>
+            <div className="mb-6">
+              <h3 className="text-lg font-semibold text-primary mb-2">
                 Next Steps
               </h3>
-              <ul style={{ fontSize: "0.875rem", color: "var(--color-primary-text)", listStyleType: "disc", paddingLeft: "1.5rem" }}>
+              <ul className="text-sm text-gray-700 list-disc pl-6 space-y-1">
                 <li>Start with Ksh 5,000 minimum investment</li>
                 <li>Open CDS account for NSE trading</li>
                 <li>Download investment apps (Haba, M-Shwari)</li>
@@ -506,15 +464,7 @@ const Recommendation = () => {
 
             <button
               onClick={restart}
-              style={{
-                width: "100%",
-                backgroundColor: "var(--color-success)",
-                color: "white",
-                padding: "0.75rem",
-                borderRadius: "0.5rem",
-                fontWeight: "500",
-                cursor: "pointer",
-              }}
+              className="w-full bg-primary hover:bg-secondary text-white py-3 rounded-lg font-semibold transition-colors"
             >
               Take Assessment Again
             </button>
@@ -522,60 +472,35 @@ const Recommendation = () => {
         </div>
 
         {/* AI Insights Sidebar */}
-        <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
+        <div className="space-y-6">
           {/*Insights */}
-          <div
-            style={{
-              backgroundColor: "var(--color-background)",
-              borderRadius: "1rem",
-              boxShadow: "0 8px 24px rgba(0, 0, 0, 0.1)",
-              padding: "1.5rem",
-            }}
-          >
-            <div style={{ display: "flex", alignItems: "center", marginBottom: "1rem" }}>
-              <Bot style={{ width: "1.5rem", height: "1.5rem", color: "var(--color-secondary)", marginRight: "0.5rem" }} />
-              <h3 style={{ fontWeight: "bold", color: "var(--color-text-dark)" }}>Insights</h3>
-              <Sparkles style={{ width: "1rem", height: "1rem", color: "var(--color-accent)", marginLeft: "0.5rem" }} />
+          <div className="bg-white rounded-xl shadow-lg p-6">
+            <div className="flex items-center mb-4">
+              <Bot className="w-6 h-6 text-secondary mr-2" />
+              <h3 className="text-xl font-bold text-gray-900">AI Insights</h3>
+              <Sparkles className="w-4 h-4 text-accent ml-2" />
             </div>
 
             {isGeneratingInsights ? (
-              <div style={{ textAlign: "center", padding: "2rem" }}>
-                <div
-                  style={{
-                    border: "4px solid var(--color-secondary)",
-                    borderRadius: "50%",
-                    width: "2rem",
-                    height: "2rem",
-                    borderBottomColor: "transparent",
-                    animation: "spin 1s linear infinite",
-                    margin: "0 auto",
-                  }}
-                ></div>
-                <span style={{ color: "var(--color-text-light)", marginTop: "0.5rem", display: "block" }}>
-                  Analyzing your profile...
-                </span>
+              <div className="text-center py-8">
+                <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-secondary mb-2"></div>
+                <p className="text-gray-500">Analyzing your profile...</p>
               </div>
             ) : (
-              <div>
+              <div className="space-y-3">
                 {aiInsights.map((insight, index) => (
                   <div
                     key={index}
-                    style={{
-                      borderLeft: `4px solid var(--color-${insight.type})`,
-                      backgroundColor: `var(--color-${insight.type}-light)`,
-                      padding: "1rem",
-                      borderRadius: "0 0.5rem 0.5rem 0",
-                      marginBottom: "0.75rem",
-                    }}
+                    className="border-l-4 border-primary bg-gray-50 p-4 rounded-r-lg"
                   >
-                    <div style={{ display: "flex" }}>
-                      <div style={{ color: `var(--color-${insight.type})`, marginRight: "0.75rem" }}>
+                    <div className="flex">
+                      <div className="text-primary mr-3">
                         {insight.icon}
                       </div>
                       <div>
-                        <h4 style={{ fontWeight: "600", color: "var(--color-text-dark)" }}>{insight.title}</h4>
-                        <p style={{ fontSize: "0.875rem", color: "var(--color-text)" }}>{insight.message}</p>
-                        <p style={{ fontSize: "0.75rem", color: "var(--color-text-light)", fontStyle: "italic" }}>
+                        <h4 className="font-semibold text-gray-900 mb-1">{insight.title}</h4>
+                        <p className="text-sm text-gray-700 mb-1">{insight.message}</p>
+                        <p className="text-xs text-gray-500 italic">
                           {insight.swahili}
                         </p>
                       </div>
@@ -587,115 +512,77 @@ const Recommendation = () => {
           </div>
 
           {/* AI Chat */}
-          <div
-            style={{
-              backgroundColor: "var(--color-background)",
-              borderRadius: "1rem",
-              boxShadow: "0 8px 24px rgba(0, 0, 0, 0.1)",
-              overflow: "hidden",
-            }}
-          >
+          <div className="bg-white rounded-xl shadow-lg overflow-hidden">
             <div
               onClick={() => setAiChatOpen(!aiChatOpen)}
-              style={{
-                background: "linear-gradient(to right, var(--color-secondary), var(--color-accent))",
-                color: "white",
-                padding: "1rem",
-                cursor: "pointer",
-              }}
+              className="bg-gradient-to-r from-secondary to-accent text-white p-4 cursor-pointer"
             >
-              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-                <div style={{ display: "flex", alignItems: "center" }}>
-                  <MessageCircle style={{ width: "1.25rem", height: "1.25rem", marginRight: "0.5rem" }} />
-                  <span>Ask AI Advisor</span>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center">
+                  <MessageCircle className="w-5 h-5 mr-2" />
+                  <span className="font-semibold">Ask AI Advisor</span>
                 </div>
                 <ChevronRight
-                  style={{
-                    width: "1.25rem",
-                    height: "1.25rem",
-                    transform: aiChatOpen ? "rotate(90deg)" : "rotate(0deg)",
-                    transition: "transform 0.3s ease",
-                  }}
+                  className={`w-5 h-5 transition-transform duration-300 ${
+                    aiChatOpen ? "rotate-90" : "rotate-0"
+                  }`}
                 />
               </div>
             </div>
 
             {aiChatOpen && (
-              <div style={{ padding: "1rem" }}>
-                <div style={{ height: "16rem", overflowY: "auto", marginBottom: "1rem" }}>
+              <div className="p-4">
+                <div className="h-64 overflow-y-auto mb-4">
                   {chatMessages.length === 0 && (
-                    <div style={{ textAlign: "center", color: "var(--color-text-light)", padding: "2rem" }}>
-                      <Bot style={{ width: "3rem", height: "3rem", margin: "0 auto", color: "var(--color-text-light)" }} />
-                      <p>Ask me anything about investing in Kenya!</p>
-                      <p style={{ fontSize: "0.875rem" }}>Try: "How do I start?", "Tell me about Safaricom", "What's my risk?"</p>
+                    <div className="text-center text-gray-500 py-8">
+                      <Bot className="w-12 h-12 mx-auto mb-3 text-gray-300" />
+                      <p className="font-medium">Ask me anything about investing in Kenya!</p>
+                      <p className="text-sm mt-1">Try: "How do I start?", "Tell me about Safaricom", "What's my risk?"</p>
                     </div>
                   )}
 
                   {chatMessages.map((msg, index) => (
                     <div
                       key={index}
-                      style={{
-                        display: "flex",
-                        justifyContent: msg.type === "user" ? "flex-end" : "flex-start",
-                        marginBottom: "0.5rem",
-                      }}
+                      className={`flex mb-2 ${msg.type === "user" ? "justify-end" : "justify-start"}`}
                     >
                       <div
-                        style={{
-                          backgroundColor: msg.type === "user" ? "var(--color-secondary)" : "var(--color-background-light)",
-                          color: msg.type === "user" ? "white" : "var(--color-text-dark)",
-                          padding: "0.5rem 1rem",
-                          borderRadius: "0.5rem",
-                          maxWidth: "16rem",
-                        }}
+                        className={`px-4 py-2 rounded-lg max-w-xs ${
+                          msg.type === "user"
+                            ? "bg-secondary text-white"
+                            : "bg-gray-100 text-gray-800"
+                        }`}
                       >
-                        <p style={{ fontSize: "0.875rem" }}>{msg.message}</p>
+                        <p className="text-sm">{msg.message}</p>
                       </div>
                     </div>
                   ))}
 
                   {isTyping && (
-                    <div style={{ display: "flex", justifyContent: "flex-start" }}>
-                      <div
-                        style={{
-                          backgroundColor: "var(--color-background-light)",
-                          color: "var(--color-text-dark)",
-                          padding: "0.5rem 1rem",
-                          borderRadius: "0.5rem",
-                        }}
-                      >
-                        <div style={{ display: "flex", gap: "0.25rem" }}>
-                          <div style={{ width: "0.5rem", height: "0.5rem", backgroundColor: "var(--color-text-light)", borderRadius: "50%", animation: "bounce 0.6s infinite alternate" }}></div>
-                          <div style={{ width: "0.5rem", height: "0.5rem", backgroundColor: "var(--color-text-light)", borderRadius: "50%", animation: "bounce 0.6s infinite alternate 0.2s" }}></div>
-                          <div style={{ width: "0.5rem", height: "0.5rem", backgroundColor: "var(--color-text-light)", borderRadius: "50%", animation: "bounce 0.6s infinite alternate 0.4s" }}></div>
+                    <div className="flex justify-start">
+                      <div className="bg-gray-100 px-4 py-2 rounded-lg">
+                        <div className="flex space-x-1">
+                          <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
+                          <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{animationDelay: '0.2s'}}></div>
+                          <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{animationDelay: '0.4s'}}></div>
                         </div>
                       </div>
                     </div>
                   )}
                 </div>
 
-                <div style={{ display: "flex", gap: "0.5rem" }}>
+                <div className="flex gap-2">
                   <input
                     type="text"
                     value={userMessage}
                     onChange={(e) => setUserMessage(e.target.value)}
                     onKeyPress={(e) => e.key === "Enter" && handleAIChat(userMessage)}
                     placeholder="Ask about investments..."
-                    style={{
-                      flex: 1,
-                      padding: "0.5rem",
-                      border: "1px solid var(--color-border)",
-                      borderRadius: "0.5rem",
-                    }}
+                    className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-secondary focus:border-transparent"
                   />
                   <button
                     onClick={() => handleAIChat(userMessage)}
-                    style={{
-                      backgroundColor: "var(--color-secondary)",
-                      color: "white",
-                      padding: "0.5rem 1rem",
-                      borderRadius: "0.5rem",
-                    }}
+                    className="bg-secondary hover:bg-primary text-white px-4 py-2 rounded-lg transition-colors"
                   >
                     Send
                   </button>
@@ -716,25 +603,11 @@ const Recommendation = () => {
 
 
  return (
-  <div
-    className="min-h-screen p-4"
-    style={{
-      background: "linear-gradient(to bottom right, var(--color-background), var(--color-accent))",
-    }}
-  >
+  <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-4">
     <div className="max-w-2xl mx-auto">
-      <div
-        className="rounded-2xl shadow-xl overflow-hidden"
-        style={{ backgroundColor: "var(--color-background)" }}
-      >
+      <div className="rounded-2xl shadow-xl overflow-hidden bg-white">
         {/* Header */}
-        <div
-          className="p-6"
-          style={{
-            background: "linear-gradient(to right, var(--color-primary), var(--color-accent))",
-            color: "white",
-          }}
-        >
+        <div className="p-6 bg-gradient-to-r from-primary to-accent text-white">
           <div className="flex items-center justify-between mb-4">
             <div>
               <h1 className="text-2xl font-bold mb-2">
@@ -742,31 +615,19 @@ const Recommendation = () => {
               </h1>
            
             </div>
-            <div
-              className="rounded-full p-3"
-              style={{ backgroundColor: "rgba(255,255,255,0.2)" }}
-            >
+            <div className="rounded-full p-3 bg-white bg-opacity-20">
               <Bot className="w-6 h-6 text-white" />
             </div>
           </div>
 
           {/* Progress Bar */}
-          <div
-            className="rounded-full h-2"
-            style={{ backgroundColor: "rgba(255,255,255,0.2)" }}
-          >
+          <div className="rounded-full h-2 bg-white bg-opacity-20">
             <div
-              className="h-2 rounded-full transition-all duration-300"
-              style={{
-                width: `${((currentStep + 1) / questions.length) * 100}%`,
-                backgroundColor: "white",
-              }}
+              className="h-2 rounded-full transition-all duration-300 bg-white"
+              style={{ width: `${((currentStep + 1) / questions.length) * 100}%` }}
             ></div>
           </div>
-          <p
-            className="text-sm mt-2"
-            style={{ color: "var(--color-text-light)" }}
-          >
+          <p className="text-sm mt-2 text-white text-opacity-80">
             Question {currentStep + 1} of {questions.length}
           </p>
         </div>
@@ -774,23 +635,14 @@ const Recommendation = () => {
         {/* Question Content */}
         <div className="p-8">
           <div className="flex items-center mb-6">
-            <div
-              className="rounded-full p-3 mr-4"
-              style={{ backgroundColor: "var(--color-accent)", opacity: 0.1 }}
-            >
-              {currentQuestion.icon}
+            <div className="rounded-full p-3 mr-4 bg-accent bg-opacity-10">
+              <div className="text-accent">{currentQuestion.icon}</div>
             </div>
             <div>
-              <h2
-                className="text-xl font-semibold mb-1"
-                style={{ color: "var(--color-text-dark)" }}
-              >
+              <h2 className="text-xl font-semibold mb-1 text-gray-900">
                 {currentQuestion.subtitle}
               </h2>
-              <p
-                className="text-sm"
-                style={{ color: "var(--color-text-light)" }}
-              >
+              <p className="text-sm text-gray-500">
                 {currentQuestion.title}
               </p>
             </div>
@@ -803,50 +655,28 @@ const Recommendation = () => {
                 onClick={() =>
                   handleResponse(currentQuestion.id, option.value)
                 }
-                className="w-full text-left p-4 rounded-lg border-2 transition-all"
-                style={{
-                  borderColor:
-                    responses[currentQuestion.id] === option.value
-                      ? "var(--color-primary)"
-                      : "var(--color-background)",
-                  backgroundColor:
-                    responses[currentQuestion.id] === option.value
-                      ? "rgba(30, 58, 138, 0.05)"
-                      : "transparent",
-                  color: "var(--color-text-dark)",
-                }}
+                className={`w-full text-left p-4 rounded-lg border-2 transition-all ${
+                  responses[currentQuestion.id] === option.value
+                    ? "border-primary bg-primary bg-opacity-5"
+                    : "border-gray-200 hover:border-gray-300"
+                }`}
               >
                 <div className="flex items-center justify-between">
                   <div>
-                    <div className="font-medium">{option.label}</div>
-                    <div
-                      className="text-sm"
-                      style={{ color: "var(--color-text-light)" }}
-                    >
+                    <div className="font-medium text-gray-900">{option.label}</div>
+                    <div className="text-sm text-gray-500">
                       {option.desc}
                     </div>
                   </div>
                   <div
-                    className="w-5 h-5 rounded-full border-2"
-                    style={{
-                      borderColor:
-                        responses[currentQuestion.id] === option.value
-                          ? "var(--color-primary)"
-                          : "var(--color-text-light)",
-                      backgroundColor:
-                        responses[currentQuestion.id] === option.value
-                          ? "var(--color-primary)"
-                          : "transparent",
-                    }}
+                    className={`w-5 h-5 rounded-full border-2 ${
+                      responses[currentQuestion.id] === option.value
+                        ? "border-primary bg-primary"
+                        : "border-gray-300"
+                    }`}
                   >
                     {responses[currentQuestion.id] === option.value && (
-                      <div
-                        className="w-full h-full rounded-full"
-                        style={{
-                          backgroundColor: "white",
-                          transform: "scale(0.5)",
-                        }}
-                      ></div>
+                      <div className="w-full h-full rounded-full bg-white transform scale-50"></div>
                     )}
                   </div>
                 </div>
@@ -856,23 +686,15 @@ const Recommendation = () => {
         </div>
 
         {/* Navigation */}
-        <div
-          className="p-6 flex justify-between"
-          style={{ backgroundColor: "var(--color-background)" }}
-        >
+        <div className="p-6 flex justify-between bg-gray-50">
           <button
             onClick={prevStep}
             disabled={currentStep === 0}
-            className="flex items-center px-4 py-2 rounded-lg font-medium transition-colors"
-            style={{
-              backgroundColor:
-                currentStep === 0 ? "#E5E7EB" : "var(--color-background)",
-              color:
-                currentStep === 0
-                  ? "var(--color-text-light)"
-                  : "var(--color-text-dark)",
-              cursor: currentStep === 0 ? "not-allowed" : "pointer",
-            }}
+            className={`flex items-center px-4 py-2 rounded-lg font-medium transition-colors ${
+              currentStep === 0
+                ? "bg-gray-200 text-gray-400 cursor-not-allowed"
+                : "bg-white text-gray-700 hover:bg-gray-100"
+            }`}
           >
             <ChevronLeft className="w-4 h-4 mr-2" />
             Previous
@@ -881,14 +703,11 @@ const Recommendation = () => {
           <button
             onClick={nextStep}
             disabled={!isAnswered}
-            className="flex items-center px-6 py-2 rounded-lg font-medium transition-colors"
-            style={{
-              backgroundColor: isAnswered
-                ? "var(--color-primary)"
-                : "#E5E7EB",
-              color: isAnswered ? "white" : "var(--color-text-light)",
-              cursor: isAnswered ? "pointer" : "not-allowed",
-            }}
+            className={`flex items-center px-6 py-2 rounded-lg font-medium transition-colors ${
+              isAnswered
+                ? "bg-primary text-white hover:bg-secondary"
+                : "bg-gray-200 text-gray-400 cursor-not-allowed"
+            }`}
           >
             {currentStep === questions.length - 1
               ? "Get Results"

@@ -1,7 +1,11 @@
 import React, { useState } from 'react';
 import { Eye, EyeOff, Mail, Lock, AlertCircle, CheckCircle, Loader2, LogIn } from 'lucide-react';
+import { useAuth } from './AuthContext';
+import { useNavigate } from 'react-router-dom';
 
 const Login = () => {
+  const { login } = useAuth();
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     email: '',
     password: ''
@@ -61,7 +65,7 @@ const Login = () => {
 
     try {
       // Replace with your actual API endpoint
-      const response = await fetch('http://127.0.0.1:8000/login/', {
+      const response = await fetch('http://127.0.0.1:8000/api/login/', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -75,19 +79,18 @@ const Login = () => {
         setSuccess(true);
         setApiResponse(data);
         
-        // Store tokens in localStorage
-        if (data.tokens) {
-          localStorage.setItem('access_token', data.tokens.access);
-          localStorage.setItem('refresh_token', data.tokens.refresh);
+        // Store tokens and update AuthContext
+        if (data.access && data.refresh) {
+          localStorage.setItem('access_token', data.access);
+          localStorage.setItem('refresh_token', data.refresh);
+          localStorage.setItem('user', JSON.stringify(data.user));
           
-          // Store user data
-          localStorage.setItem('user_data', JSON.stringify(data.user));
+          // Update AuthContext with user data and token
+          login(data.user, data.access);
+          
+          // Immediate redirect - no delay needed
+          navigate('/home');
         }
-        
-        // Redirect to dashboard after a short delay
-        setTimeout(() => {
-          window.location.href = '/dashboard';
-        }, 2000);
         
         console.log('Login successful:', data);
       } else {
