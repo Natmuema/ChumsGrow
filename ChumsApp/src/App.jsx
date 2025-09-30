@@ -3,49 +3,41 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { AuthProvider } from './components/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
 import Navbar from './components/Navbar';
-import Footer from './components/Footer';
-import { Home, RiskProfiler, LearningHub, AuthPage, Opportunities, BlogPost } from './pages';
+import { Home, RiskProfiler, LearningHub, AuthPage, Opportunities } from './pages';
 
 function App() {
   return (
     <AuthProvider>
       <Router>
         <div className="App min-h-screen bg-white">
-          <Navbar />
           <Routes>
-            {/* Public routes */}
+            {/* Public route for authentication */}
             <Route path="/auth" element={<AuthPage />} />
-            <Route path="/" element={<Navigate to="/home" replace />} />
-            <Route path="/home" element={
-              <>
-                <Home />
-                <Footer />
-              </>
-            } />
             
             {/* Protected routes */}
+            <Route path="/" element={<Navigate to="/home" replace />} />
+            <Route path="/home" element={
+              <ProtectedRoute>
+                <Navbar />
+                <Home />
+              </ProtectedRoute>
+            } />
             <Route path="/risk-profiler" element={
               <ProtectedRoute>
+                <Navbar />
                 <RiskProfiler />
-                <Footer />
               </ProtectedRoute>
             } />
             <Route path="/learning-hub" element={
               <ProtectedRoute>
+                <Navbar />
                 <LearningHub />
-                <Footer />
-              </ProtectedRoute>
-            } />
-            <Route path="/blog/:id" element={
-              <ProtectedRoute>
-                <BlogPost />
-                <Footer />
               </ProtectedRoute>
             } />
             <Route path="/opportunities" element={
               <ProtectedRoute>
+                <Navbar />
                 <Opportunities />
-                <Footer />
               </ProtectedRoute>
             } />
           </Routes>

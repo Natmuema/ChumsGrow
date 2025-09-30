@@ -3,7 +3,6 @@ import RiskProfiler from './RiskProfiler';
 import LearningHub from './LearningHub';
 import AuthPage from './AuthPage';
 import Opportunities from './Opportunities';
-import BlogPost from './BlogPost';
 
 
 export {
@@ -11,6 +10,5 @@ export {
   AuthPage,
   RiskProfiler,
   LearningHub,
-  Opportunities,
-  BlogPost
+  Opportunities
 };

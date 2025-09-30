@@ -59,25 +59,14 @@ const AuthPage = () => {
       const data = await response.json();
 
       if (response.ok) {
-        console.log('Login successful, response data:', data);
-        
-        // Store tokens in localStorage
-        if (data.access && data.refresh) {
-          localStorage.setItem('access_token', data.access);
-          localStorage.setItem('refresh_token', data.refresh);
-          localStorage.setItem('user', JSON.stringify(data.user));
-          console.log('Tokens stored in localStorage');
-        }
-        
-        login(data.user, data.access || data.token);
-        console.log('AuthContext login called');
+        login(data.user, data.token);
         setMessage('Login successful! Welcome back!');
         setMessageType('success');
         
-        console.log('About to navigate to /home');
-        // Navigate to home immediately
-        navigate('/home');
-        console.log('Navigate called');
+        // Redirect to home page after successful login
+        setTimeout(() => {
+          navigate('/home');
+        }, 1000);
       } else {
         setMessage(data.message || 'Login failed. Please try again.');
         setMessageType('error');
@@ -114,19 +103,14 @@ const AuthPage = () => {
       const data = await response.json();
 
       if (response.ok) {
-        // Store tokens in localStorage
-        if (data.access && data.refresh) {
-          localStorage.setItem('access_token', data.access);
-          localStorage.setItem('refresh_token', data.refresh);
-          localStorage.setItem('user', JSON.stringify(data.user));
-        }
-        
-        login(data.user, data.access || data.token);
-        setMessage('Registration successful! Welcome to ChumsGrow!');
+        login(data.user, data.token);
+        setMessage('Registration successful! Welcome to Kenya Investment Platform!');
         setMessageType('success');
         
-        // Navigate to home immediately
-        navigate('/home');
+        // Redirect to home page after successful registration
+        setTimeout(() => {
+          navigate('/home');
+        }, 1000);
       } else {
         const errorMessage = typeof data === 'object' ? 
           Object.values(data).flat().join(', ') : 

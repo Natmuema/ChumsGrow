@@ -1,11 +1,7 @@
 import React, { useState } from 'react';
 import { Eye, EyeOff, User, Mail, Phone, CreditCard, Lock, AlertCircle, CheckCircle, Loader2 } from 'lucide-react';
-import { useAuth } from './AuthContext';
-import { useNavigate } from 'react-router-dom';
 
 const Register = () => {
-  const { login } = useAuth();
-  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     email: '',
     username: '',
@@ -102,8 +98,9 @@ const Register = () => {
     setErrors({});
 
     try {
-      // Replace with your actual API endpoint
-      const response = await fetch('http://127.0.0.1:8000/api/register/', {
+      // Use environment variable or fallback to local
+      const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000';
+      const response = await fetch(`${API_BASE_URL}/api/register/`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -117,17 +114,10 @@ const Register = () => {
         setSuccess(true);
         setApiResponse(data);
         
-        // Store tokens and update AuthContext
-        if (data.access && data.refresh) {
-          localStorage.setItem('access_token', data.access);
-          localStorage.setItem('refresh_token', data.refresh);
-          localStorage.setItem('user', JSON.stringify(data.user));
-          
-          // Update AuthContext with user data and token
-          login(data.user, data.access);
-          
-          // Immediate redirect
-          navigate('/home');
+        // Store tokens in localStorage (you might want to use a more secure approach)
+        if (data.tokens) {
+          localStorage.setItem('access_token', data.tokens.access);
+          localStorage.setItem('refresh_token', data.tokens.refresh);
         }
         
         // You can redirect to dashboard or login page here
@@ -169,7 +159,7 @@ const Register = () => {
             <p>Verification Status: {apiResponse?.user?.is_verified ? 'Verified' : 'Pending'}</p>
           </div>
           <button
-            onClick={() => window.location.href = '/home'}
+            onClick={() => window.location.href = '/login'}
             className="mt-6 w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors"
           >
             Continue to Dashboard

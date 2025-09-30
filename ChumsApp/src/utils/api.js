@@ -28,12 +28,12 @@ export async function fetchWithAuth(url, options = {}) {
     throw new Error('Authentication required. Please log in.');
   }
 
-  const refreshResponse = await fetch('http://127.0.0.1:8000/api/token/refresh/', {
+  const refreshResponse = await fetch('/api/auth/refresh', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ refresh: refresh })
+    body: JSON.stringify({ refresh_token: refresh })
   });
 
   if (!refreshResponse.ok) {
@@ -44,13 +44,13 @@ export async function fetchWithAuth(url, options = {}) {
     throw new Error('Session expired. Please log in again.');
   }
 
-  const { access: newAccessToken } = await refreshResponse.json();
-  localStorage.setItem('access_token', newAccessToken);
+  const { access_token } = await refreshResponse.json();
+  localStorage.setItem('access_token', access_token);
 
   // Retry original request with new token
   const retryHeaders = {
     ...options.headers,
-    'Authorization': `Bearer ${newAccessToken}`
+    'Authorization': `Bearer ${access_token}`
   };
 
   return fetch(url, {
