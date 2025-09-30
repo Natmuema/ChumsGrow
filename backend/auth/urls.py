@@ -4,10 +4,12 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 from health import health_check
+from test_views import test_api
 
 
 urlpatterns = [
     path('', health_check, name='health_check'),  # Root health check
+    path('test/', test_api, name='test_api'),  # Test API endpoint
     path('admin/', admin.site.urls),
     path('api/', include('users.urls')),
     path('api/', include('investments.urls')),
