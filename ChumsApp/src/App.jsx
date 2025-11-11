@@ -4,7 +4,7 @@ import { AuthProvider } from './components/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
-import { Home, RiskProfiler, LearningHub, MarketInsights, AuthPage, Opportunities } from './pages';
+import { Home, RiskProfiler, LearningHub, AuthPage, Opportunities, BlogPost } from './pages';
 
 function App() {
   return (
@@ -36,9 +36,9 @@ function App() {
                 <Footer />
               </ProtectedRoute>
             } />
-            <Route path="/insights" element={
+            <Route path="/blog/:id" element={
               <ProtectedRoute>
-                <MarketInsights />
+                <BlogPost />
                 <Footer />
               </ProtectedRoute>
             } />

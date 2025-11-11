@@ -31,13 +31,13 @@ const ProtectedRoute = ({ children }) => {
           </p>
           <div className="space-y-3">
             <button
-              onClick={() => window.location.href = '/login'}
+              onClick={() => window.location.href = '/auth'}
               className="w-full bg-green-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-green-700 transition-colors"
             >
               Sign In
             </button>
             <button
-              onClick={() => window.location.href = '/'}
+              onClick={() => window.location.href = '/home'}
               className="w-full border border-gray-300 text-gray-700 px-6 py-3 rounded-lg font-semibold hover:bg-gray-50 transition-colors"
             >
               Go to Homepage

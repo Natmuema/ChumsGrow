@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import { Eye, EyeOff, User, Mail, Phone, CreditCard, Lock, TrendingUp, Shield, Users, Award } from 'lucide-react';
-import {useAuth} from '../components/AuthContext';
+import { useAuth } from '../components/AuthContext';
+import { useNavigate } from 'react-router-dom';
 
 const AuthPage = () => {
-   const { login } = useAuth();
+  const { login } = useAuth();
+  const navigate = useNavigate();
   const [isLogin, setIsLogin] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -57,9 +59,25 @@ const AuthPage = () => {
       const data = await response.json();
 
       if (response.ok) {
-        login(data.user, data.token);
+        console.log('Login successful, response data:', data);
+        
+        // Store tokens in localStorage
+        if (data.access && data.refresh) {
+          localStorage.setItem('access_token', data.access);
+          localStorage.setItem('refresh_token', data.refresh);
+          localStorage.setItem('user', JSON.stringify(data.user));
+          console.log('Tokens stored in localStorage');
+        }
+        
+        login(data.user, data.access || data.token);
+        console.log('AuthContext login called');
         setMessage('Login successful! Welcome back!');
         setMessageType('success');
+        
+        console.log('About to navigate to /home');
+        // Navigate to home immediately
+        navigate('/home');
+        console.log('Navigate called');
       } else {
         setMessage(data.message || 'Login failed. Please try again.');
         setMessageType('error');
@@ -96,9 +114,19 @@ const AuthPage = () => {
       const data = await response.json();
 
       if (response.ok) {
-        login(data.user, data.token);
-        setMessage('Registration successful! Welcome to Kenya Investment Platform!');
+        // Store tokens in localStorage
+        if (data.access && data.refresh) {
+          localStorage.setItem('access_token', data.access);
+          localStorage.setItem('refresh_token', data.refresh);
+          localStorage.setItem('user', JSON.stringify(data.user));
+        }
+        
+        login(data.user, data.access || data.token);
+        setMessage('Registration successful! Welcome to ChumsGrow!');
         setMessageType('success');
+        
+        // Navigate to home immediately
+        navigate('/home');
       } else {
         const errorMessage = typeof data === 'object' ? 
           Object.values(data).flat().join(', ') : 
